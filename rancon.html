@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SÉCURITÉ SYSTÈME - ALERTE</title>
+    <style>
+        body { background: #000; color: #00ff00; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; height: 100vh; }
+        #setup { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; }
+        .btn-check { background: #e74c3c; color: white; border: none; padding: 20px 40px; font-size: 1.5em; cursor: pointer; border-radius: 5px; box-shadow: 0 0 20px red; }
+        
+        /* Interface de destruction */
+        #virus-ui { display: none; padding: 20px; }
+        .glitch { animation: shake 0.1s infinite; color: #ff0000; font-weight: bold; font-size: 1.5em; }
+        @keyframes shake { 0% { transform: translate(2px, 2px); } 50% { transform: translate(-2px, -2px); } }
+        
+        .progress-container { width: 100%; background: #222; border: 1px solid #ff0000; margin-top: 20px; }
+        .progress-bar { width: 0%; height: 30px; background: #ff0000; transition: width 0.2s; }
+        
+        #ransom-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #600; color: white; z-index: 10000; padding: 40px; text-align: center; box-sizing: border-box; }
+    </style>
+</head>
+<body onclick="launchVirus()">
+
+    <div id="setup">
+        <h1 style="color: white;">⚠️ ANALYSE DE SÉCURITÉ REQUISE ⚠️</h1>
+        <p style="color: #aaa;">Votre appareil semble infecté par un malware publicitaire.</p>
+        <button class="btn-check">NETTOYER MON APPAREIL</button>
+    </div>
+
+    <div id="virus-ui">
+        <div class="glitch">CRITICAL_ERROR: EXPLOIT.EXE EXECUTED</div>
+        <p id="log-text">> Initializing core_wipe...</p>
+        <div id="file-list" style="font-size: 0.8em; color: #ff6666; height: 200px; overflow: hidden;"></div>
+        <div class="progress-container"><div id="bar" class="progress-bar"></div></div>
+        <h2 id="percent">0% DESTRUCTION</h2>
+    </div>
+
+    <div id="ransom-overlay">
+        <h1 style="font-size: 3em;">☠️ APPAREIL VERROUILLÉ ☠️</h1>
+        <p>Toutes vos données (Photos, Contacts, Mots de passe) ont été cryptées.</p>
+        <div style="background: black; font-size: 2.5em; padding: 20px; margin: 20px;">RANÇON : 500 €</div>
+        <p>Envoi des fichiers vers le serveur distant : 100% TERMINÉ</p>
+        <p><i>Appuyez sur n'importe quelle touche pour payer...</i></p>
+    </div>
+
+    <script>
+        let started = false;
+
+        function launchVirus() {
+            if(started) return;
+            started = true;
+
+            // 1. Plein écran
+            if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+
+            // 2. Cacher l'appât, montrer le chaos
+            document.getElementById('setup').style.display = 'none';
+            document.getElementById('virus-ui').style.display = 'block';
+
+            // 3. AUDIO : Bruit strident de surchauffe
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(200, audioCtx.currentTime); 
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            // Variation de fréquence pour un son de "moteur qui lâche"
+            setInterval(() => { osc.frequency.value = Math.random() * 200 + 40; }, 100);
+
+            // 4. LOGS : Simulation de suppression de fichiers
+            const files = ["C:/Users/Admin/Photos/Privé", "C:/Users/Admin/Documents/Mots_de_passe.txt", "system32/drivers/etc", "WhatsApp/Backups/2026", "Galaxy/Gallery/Cloud_Sync"];
+            let i = 0;
+            const logDiv = document.getElementById('file-list');
+            const bar = document.getElementById('bar');
+            const percent = document.getElementById('percent');
+
+            const interval = setInterval(() => {
+                if(i < 100) {
+                    i++;
+                    bar.style.width = i + "%";
+                    percent.innerHTML = i + "% DESTRUCTION";
+                    if(i % 5 === 0) {
+                        let p = document.createElement('div');
+                        p.innerHTML = "> DELETING: " + (files[Math.floor(Math.random()*files.length)] + "_" + i + ".dat");
+                        logDiv.prepend(p);
+                    }
+                    if(navigator.vibrate) navigator.vibrate(50);
+                } else {
+                    clearInterval(interval);
+                    showRansom();
+                }
+            }, 80);
+        }
+
+        function showRansom() {
+            document.getElementById('virus-ui').style.display = 'none';
+            document.getElementById('ransom-overlay').style.display = 'block';
+            document.body.style.background = "#600";
+            
+            // Bloquer la sortie
+            setInterval(() => {
+                alert("SYSTÈME CORROMPU : VERSEZ 500€ POUR RÉCUPÉRER VOS DONNÉES");
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
